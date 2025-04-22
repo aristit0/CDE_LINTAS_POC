@@ -1,28 +1,31 @@
+from datetime import datetime, timedelta
 from airflow import DAG
-from datetime import datetime
-from cloudera.cde.operators.cde_operator import CDEJobRunOperator
+from cloudera.airflow.providers.operators.cde import CdeRunJobOperator
 
 default_args = {
-    "owner": "airflow",
-    "start_date": datetime(2024, 1, 1),
+    'owner': 'airflow',
+    'retry_delay': timedelta(seconds=10),
+    'depends_on_past': False,
+    'start_date': datetime(2024, 1, 1),
 }
 
 with DAG(
-    dag_id="master_employee_dag",
+    dag_id='master_employee_dag',
     default_args=default_args,
     schedule_interval=None,
     catchup=False,
-    description="Run staging and partition insert jobs via CDE Spark Jobs"
+    is_paused_upon_creation=False
 ) as dag:
 
-    run_create_stg = CDEJobRunOperator(
-        task_id="create_employee_stg",
-        name="create-employee-stg"
+    create_stg_task = CdeRunJobOperator(
+        task_id='create_stg',
+        job_name='create-employee-stg',  # Sesuai job yang kamu buat di CDE
+        connection_id='cde-default'      # atau 'cde-vc01-dev' kalau itu VC kamu
     )
 
-    run_insert_pst = CDEJobRunOperator(
-        task_id="insert_employee_pst",
-        name="insert-employee-pst"
+    insert_pst_task = CdeRunJobOperator(
+        task_id='insert_pst',
+        job_name='insert-employee-pst'
     )
 
-    run_create_stg >> run_insert_pst
+    create_stg_task >> insert_pst_task
