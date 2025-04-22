@@ -9,7 +9,7 @@ spark = SparkSession.builder \
 data = [(i, f"Employee_{i}", "IT", 5000 + i) for i in range(1, 1001)]
 df = spark.createDataFrame(data, ["id", "name", "department", "salary"])
 
-# Write using Iceberg API (assume Spark configured with Iceberg catalog named 'hive')
-df.writeTo("development_iceberg.employee_stg").createOrReplace()
+# Append to existing Iceberg table
+df.writeTo("development_iceberg.employee_stg").append()
 
 spark.stop()
