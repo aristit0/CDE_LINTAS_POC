@@ -7,18 +7,10 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 spark.sql("""
-    CREATE TABLE IF NOT EXISTS development_test.employee_pst (
-        id INT,
-        name STRING,
-        department STRING,
-        salary DOUBLE,
-        tanggal DATE
-    )
-    PARTITIONED BY (tanggal)
-    STORED BY ICEBERG
+zyy
 """)
 
-df = spark.read.table("development_test.employee_stg")
+df = spark.read.table("development_iceberg.employee_stg")
 df.withColumn("tanggal", current_date()) \
   .writeTo("development_test.employee_pst").append()
 

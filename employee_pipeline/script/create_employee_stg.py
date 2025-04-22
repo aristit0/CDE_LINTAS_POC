@@ -5,18 +5,11 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
-spark.sql("""
-    CREATE TABLE IF NOT EXISTS development_test.employee_stg (
-        id INT,
-        name STRING,
-        department STRING,
-        salary DOUBLE
-    )
-    STORED BY ICEBERG
-""")
-
+# Generate dummy data
 data = [(i, f"Employee_{i}", "IT", 5000 + i) for i in range(1, 1001)]
 df = spark.createDataFrame(data, ["id", "name", "department", "salary"])
-df.writeTo("development_test.employee_stg").overwrite()
+
+# Write using Iceberg API (assume Spark configured with Iceberg catalog named 'hive')
+df.writeTo("development_iceberg.employee_stg").createOrReplace()
 
 spark.stop()
