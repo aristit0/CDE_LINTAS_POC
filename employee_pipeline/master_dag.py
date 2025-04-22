@@ -20,7 +20,7 @@ with DAG(
     create_stg_task = CdeRunJobOperator(
         task_id='create_stg',
         job_name='create-employee-stg',  # Sesuai job yang kamu buat di CDE
-        connection_id='cde-default'      # atau 'cde-vc01-dev' kalau itu VC kamu
+        connection_id='Default-VC-xgxksvr8'      # atau 'cde-vc01-dev' kalau itu VC kamu
     )
 
     insert_pst_task = CdeRunJobOperator(
