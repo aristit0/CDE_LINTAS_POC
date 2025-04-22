@@ -16,12 +16,12 @@ with DAG("master_employee_dag",
 
     create_stg = CDEJobRunOperator(
         task_id="create_employee_stg",
-        name="create-employee-stg",  # nama job di CDE
+        name="create-employee-stg",  # harus sesuai dengan job name di CDE
     )
 
     insert_pst = CDEJobRunOperator(
         task_id="insert_employee_pst",
-        name="insert-employee-pst",  # nama job di CDE
+        name="insert-employee-pst",  # harus sesuai dengan job name di CDE
     )
 
     create_stg >> insert_pst
