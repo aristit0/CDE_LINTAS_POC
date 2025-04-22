@@ -6,12 +6,12 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
-spark.sql("""
-zyy
-""")
-
+# Baca dari staging table
 df = spark.read.table("development_iceberg.employee_stg")
+
+# Tambahkan kolom tanggal, lalu append ke tabel Iceberg tujuan
 df.withColumn("tanggal", current_date()) \
-  .writeTo("development_test.employee_pst").append()
+  .writeTo("development_iceberg.employee_pst") \
+  .append()
 
 spark.stop()
