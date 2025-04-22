@@ -1,30 +1,27 @@
 from airflow import DAG
-from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from datetime import datetime
+from cloudera.cde.operators.cde_operator import CDEJobRunOperator
 
 default_args = {
     "owner": "airflow",
     "start_date": datetime(2024, 1, 1),
     "depends_on_past": False,
-    "retries": 0
 }
 
 with DAG("master_employee_dag",
          default_args=default_args,
          schedule_interval=None,
          catchup=False,
-         description="DAG to run create STG and insert PST employee Iceberg jobs") as dag:
+         description="Run staging and partition insert jobs") as dag:
 
-    create_stg = SparkSubmitOperator(
+    create_stg = CDEJobRunOperator(
         task_id="create_employee_stg",
-        application="/app/mount/employee_pipeline/scripts/create_employee_stg.py",
-        conn_id="spark_default"
+        name="create-employee-stg",  # nama job di CDE
     )
 
-    insert_pst = SparkSubmitOperator(
+    insert_pst = CDEJobRunOperator(
         task_id="insert_employee_pst",
-        application="/app/mount/employee_pipeline/scripts/insert_employee_pst.py",
-        conn_id="spark_default"
+        name="insert-employee-pst",  # nama job di CDE
     )
 
     create_stg >> insert_pst
